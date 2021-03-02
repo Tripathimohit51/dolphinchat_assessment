@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
 import './App.css';
 import Login from './components/Login';
-import LandingComp from './components/LandingComp';
+import LandingComponent from './components/LandingComponent';
 
 function App() {
   const [userData, setuserData] = useState({});
 
   if (userData && Object.keys(userData).length !== 0) {
     return (
-      <LandingComp loginData={userData} />
+      <LandingComponent loginData={userData} />
     );
   } else {
     return (

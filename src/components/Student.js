@@ -3,7 +3,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Typography from '@material-ui/core/Typography';
-import { InputLabel,CssBaseline } from '@material-ui/core';
+import { CssBaseline } from '@material-ui/core';
 
 
 const useStyles = makeStyles({
@@ -12,6 +12,7 @@ const useStyles = makeStyles({
       width: 528,
       marginTop: 50,
       marginLeft:289,
+      background: 'linear-gradient(135deg, orange 60%, cyan)'
     },
     title: {
       fontSize: 14,
@@ -36,17 +37,26 @@ const Student=(props)=>{
         </Typography>
         <Card className={classes.root} variant="outlined">
         <CardContent>
+          {Object.keys(student).length === 0 ? 'No data found' : 
+          <>
           <Typography className={classes.title} color="textSecondary" gutterBottom>
-          <InputLabel>username: </InputLabel>{student.username!=='' ? student.username: '-'}
+          Username: {student && student.username!=='' ? student.username: '--'}
           </Typography>
           <CssBaseline />
           <Typography className={classes.title} color="textSecondary" gutterBottom>
-          <InputLabel>Email: </InputLabel> {student.email!==''? student.email: '-'}
+          Email: {student.email!==''? student.email: '-'}
           </Typography>
           <CssBaseline />
           <Typography className={classes.title} color="textSecondary" gutterBottom>
-            Physics,Chemistry,Maths
+            Subjects: {
+              student.subjects && student.subjects.map(element => (
+                element.name + ' '
+              )) 
+            }
           </Typography>
+          </>
+          }
+          
           </CardContent>
       </Card>
         </>

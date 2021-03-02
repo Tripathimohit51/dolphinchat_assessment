@@ -7,9 +7,12 @@
     "@testing-library/react": "^11.2.5",
     "@testing-library/user-event": "^12.7.3",
     "bootstrap": "^4.6.0",
+    "multiselect-react-dropdown": "^1.6.11",
+    "npm": "^7.6.0",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-final-form": "^6.5.2",
+    "react-open-weather": "^1.1.1",
     "react-scripts": "4.0.3",
     "web-vitals": "^1.1.0"
   },

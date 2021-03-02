@@ -1,8 +1,8 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import Teacher from './Teacher';
 import Student from './Student';
  
-const LandingComp=(props) => {
+const LandingComponent=(props) => {
 
     if (props.loginData.userType ==='teacher') {
         return (
@@ -15,4 +15,4 @@ const LandingComp=(props) => {
       }
 }
 
-export default LandingComp;
+export default LandingComponent;

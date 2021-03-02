@@ -11,8 +11,6 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
-
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import InputBase from '@material-ui/core/InputBase';
@@ -21,7 +19,10 @@ import MenuIcon from '@material-ui/icons/Menu';
 import SearchIcon from '@material-ui/icons/Search';
 import IconButton from '@material-ui/core/IconButton';
 import Typography from '@material-ui/core/Typography';
-import {Paper,FormControlLabel,Checkbox} from '@material-ui/core';
+import { Paper } from '@material-ui/core';
+import { Multiselect } from 'multiselect-react-dropdown';
+
+
 const useStyles = makeStyles((theme) => ({
     table: {
         minWidth: 650,
@@ -75,8 +76,11 @@ const useStyles = makeStyles((theme) => ({
         marginRight: theme.spacing(2),
     },
     toggleBtn: {
-        width:140,
-        float:'right'
+        width: 140,
+        float: 'right'
+    },
+    multiSelectContainer: {
+        marginTop: 18
     },
     inputInput: {
         padding: theme.spacing(1, 1, 1, 0),
@@ -94,31 +98,22 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 let dataArr = [];
-let sujectcell = '';
 const Teacher = () => {
     const classes = useStyles();
+    const objectArray=[
+    {name:'Physics', id:1},
+    {name:'Chemistry', id: 2},
+    {name:'Maths', id: 2},
+    {name:'English', id: 2},
+    {name:'French', id: 2}];
     const [openModal, setOpenModal] = useState(false);
-    const [detail, setDetail] = useState({ username: '', email: '', physics:false,chemistry:false,maths:false,english:false,computers: false}, 0);
+    const [detail, setDetail] = useState({ username: '', email: '',subjects:[] } , 0);
     const [rows, setRow] = useState([]);
-
+    let [isModalSubmit, setIsModalSubmit] = useState(true);
     const handleClickOpen = () => {
-        setDetail({ ...detail, physics:false,chemistry:false,maths:false,english:false,computers: false });
+        setDetail({ ...detail });
         setOpenModal(true);
     };
-
-    const handleSubjectChange = (event) => {
-        setDetail({ ...detail, [event.target.name]: event.target.checked });
-        handleCell();
-    };
-
-    const handleCell= () => {
-        if(detail.physics) sujectcell = <TableCell>Physics</TableCell>
-        if(detail.chemistry) sujectcell = <TableCell>Chemistry</TableCell>
-        if(detail.english) sujectcell = <TableCell>English</TableCell>
-        if(detail.maths) sujectcell = <TableCell>Maths</TableCell>
-        if(detail.computers) sujectcell = <TableCell>Computers</TableCell>
-
-    }
     const handleClose = () => {
         setOpenModal(false);
     };
@@ -132,17 +127,29 @@ const Teacher = () => {
     useEffect(() => {
         dataArr = JSON.parse(localStorage.getItem("users") || "[]");
         setRow(dataArr);
-}, []);
+        detail.username!=='' && detail.subjects.length>=3 ?setIsModalSubmit(false) : setIsModalSubmit(true);       
+    }, [detail]);
 
-const handleSearch = (e) => {
-    if(e.target.value !==''){
-        const data = rows.filter(element => element.username.includes(e.target.value));
-        if(data.length> 0) setRow(data);
-    } else {
-        setRow(dataArr);
+    const handleSearch = (e) => {
+        if (e.target.value !== '') {
+            const data = rows.filter(element => element.username.includes(e.target.value));
+            if (data.length > 0) setRow(data);
+        } else {
+            setRow(dataArr);
+        }
+
     }
-   
-}
+    const onSelect= (selectedList, selectedItem) => {
+        setDetail({...detail,subjects: selectedList});
+    }
+    
+    const onRemove=(selectedList, removedItem) => {
+        setDetail({...detail,subjects: selectedList});
+    }
+
+    const onRowSelection = (e) => {
+        console.log(e,'wwwwww');
+    }
     return (
         <div>
             <div className={classes.root}>
@@ -194,49 +201,37 @@ const handleSearch = (e) => {
                         onChange={eve => { setDetail({ ...detail, username: eve.target.value }) }}
                     />
                     <TextField
-                        autoFocus
                         margin="dense"
-                        id="name"
+                        id="email"
                         label="Email Address"
                         type="email"
                         fullWidth
                         onChange={eve => { setDetail({ ...detail, email: eve.target.value }) }}
                     />
-       <div>         
-    <FormControlLabel
-        control={<Checkbox checked={detail.physics} onChange={handleSubjectChange} name="physics" />}
-        label="Physics" color="primary"
-      />  
-      <FormControlLabel
-        control={<Checkbox checked={detail.chemistry} onChange={handleSubjectChange} name="chemistry" />}
-        label="Chemistry" color="primary"
-      /> 
-      <FormControlLabel
-        control={<Checkbox checked={detail.maths} onChange={handleSubjectChange} name="maths" />}
-        label="Maths" color="primary"
-      /> 
-      <FormControlLabel
-        control={<Checkbox checked={detail.english} onChange={handleSubjectChange} name="english" />}
-        label="English" color="primary"
-      /> 
-      <FormControlLabel
-        control={<Checkbox checked={detail.computers} onChange={handleSubjectChange} name="computers" />}
-        label="Computers" color="primary"
-      /> 
-      </div>             
-        </DialogContent>
+                        <div className={classes.multiSelectContainer}>
+                        <Multiselect
+                            options={objectArray}
+                            displayValue="name"
+                            placeholder='Select Subjects'
+                            onSelect={onSelect}
+                            onRemove={onRemove}
+                            showCheckbox={true}
+                        />
+                        </div>
+                </DialogContent>
                 <DialogActions>
                     <Button onClick={handleClose} color="primary">
                         Cancel
           </Button>
-                    <Button onClick={handleSubmit} color="primary">
+                    <Button disabled={isModalSubmit} onClick={handleSubmit} color="primary">
                         Submit
           </Button>
                 </DialogActions>
             </Dialog>
 
             <TableContainer component={Paper}>
-                <Table className={classes.table} aria-label="simple table">
+                <Table
+                className={classes.table} aria-label="simple table">
                     <TableHead>
                         <TableRow>
                             <TableCell>Student Name</TableCell>
@@ -245,14 +240,19 @@ const handleSearch = (e) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-                        {rows.map((row) => (
-                            <TableRow key={row.username}>
-                                <TableCell component="th" scope="row">
+                        {rows.map((row,index) => (
+                            <TableRow key={index}>
+                                <TableCell  component="th" scope="row">
                                     {row.username}
                                 </TableCell>
                                 <TableCell>{row.email}</TableCell>
-                               {sujectcell}
-                               <TableCell>Physics,Chemistry,Maths</TableCell>
+                                <TableCell>
+                                {
+                                    row.subjects && row.subjects.map(element => (
+                                        element.name+ ' '
+                                    ))
+                                }
+                                  </TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
